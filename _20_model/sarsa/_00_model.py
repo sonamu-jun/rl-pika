@@ -19,7 +19,7 @@ class Sarsa:
 
         # - Variables
         self.epsilon = self.train_conf["epsilon_start"]
-        self.action_next = None
+        self.action_next_mat = None
 
         # - Target Policy Name
         if policy_name_for_play is not None:
@@ -48,14 +48,14 @@ class Sarsa:
         state = self.map_to_designed_state(state_mat)
 
         # - Action Selection by Epsilon-Greedy Policy
-        if self.action_next is None:
+        if self.action_next_mat is None:
             action_mat = sarsa._06_algorithm.epsilon_greedy_action_selection(
                 policy=self.policy,
                 state=state,
                 epsilon=self.epsilon,
             )
         else:
-            action_mat = self.action_next
+            action_mat = self.action_next_mat
         action = self.map_to_designed_action(action_mat)
 
         # - Run Environment and Get Transition
@@ -68,24 +68,26 @@ class Sarsa:
 
         # - Select Next Action for SARSA Update
         if done is not True:
-            action_next = sarsa._06_algorithm.epsilon_greedy_action_selection(
+            action_next_mat = sarsa._06_algorithm.epsilon_greedy_action_selection(
                 policy=self.policy,
                 state=state_next,
                 epsilon=self.epsilon,
             )
+            action_next = self.map_to_designed_action(action_next_mat)
         else:
+            action_next_mat = None
             action_next = None
-
+                
         # - Aggregate Transition
         transition = (state, action_mat, state_next,
                       action_next, reward_next, done, score)
 
         # - Update Epsilon and Cache the Next Action
         self.update_epsilon()
-        self.action_next = action_next
+        self.action_next_mat = action_next_mat
 
         # - Return Transition
-        return transition
+        return transition, state_next_mat
 
     def update(self, transition):
         """================================================================================================

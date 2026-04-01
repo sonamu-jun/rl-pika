@@ -48,10 +48,10 @@ def run(conf):
             state_mat = state_next_mat
 
             # - Check Terminate Condition
-            done = transition[4]
+            done = transition[-2]
             if done:
                 break
-
+            
     """====================================================================================================
     ## Save Trained Policy at the End of Episode
     ===================================================================================================="""
